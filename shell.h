@@ -1,4 +1,4 @@
 #define EXIT_SUCCESS 0
 
-void shloop();
+void shloop(void);
 char *sh_read()
