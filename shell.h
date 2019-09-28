@@ -1,3 +1,4 @@
+#include <stdint.h>
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE -1
 #define SH_TOK_BUFSIZE 64
@@ -6,3 +7,4 @@
 void shloop(void);
 char *sh_read_line();
 char **sh_split_line(char *line);
+uint8_t sh_launch(char **args);
