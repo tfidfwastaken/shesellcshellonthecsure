@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include "shell.h"
 
 void shloop(void)
@@ -55,6 +57,7 @@ char **sh_split_line(char *line)
         }
     }
 
+
     token = strtok(NULL, SH_TOK_DELIMS);
     return tokens;
 }
@@ -67,10 +70,10 @@ uint8_t sh_launch(char **args)
     pid = fork();
     if(pid == 0) {
         if(execvp(args[0], args) == -1) {
-            perror("shesell");
+            perror("she sell");
         }
     } else if(pid < 0) {
-        perror("shesell");
+        perror("she sell");
     } else {
         do {
             wpid = waitpid(pid, &status, WUNTRACED);
@@ -80,14 +83,38 @@ uint8_t sh_launch(char **args)
     return 1;
 }
 
-uint8_t main(int argc, char **argv)
+size_t sh_num_builtins()
 {
-    //Load config
+    return sizeof(builtin_str) / sizeof(char *);
+}
 
-    // Run command loop
-    shloop();
+uint8_t sh_cd(char **args)
+{
+    if(args[1] == NULL) {
+        fprintf(stderr, "she sell: expected argument to \"cd\"\n");
+    } else {
+        if(chdir(args[1]) != 0) {
+            perror("she sell");
+        }
+    }
+    
+    return 1;
+}
+    
+uint8_t sh_help(char **args)
+{
+    printf("She Sells C Shells on the C, Sure!\n");
+    printf("Made by Atharva Raykar, based on Stephen Brennan's LSH\n");
+    printf("Built-ins:\n");
 
-    //Cleanup
+    for(size_t i = 0; i < sh_num_builtins(); ++i) {
+        printf("  %s\n", builtin_str[i]);
+    }
 
-    return EXIT_SUCCESS;
+    return 1;
+}
+
+uint8_t sh_exit(char **args)
+{
+    return 0;
 }
