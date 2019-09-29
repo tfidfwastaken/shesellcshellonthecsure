@@ -118,3 +118,19 @@ uint8_t sh_exit(char **args)
 {
     return 0;
 }
+
+uint8_t sh_execute(char **args)
+{
+    if(args[0] == NULL) {
+        // empty command
+        return 1;
+    }
+
+    for(size_t i = 0; i < sh_num_builtins(); ++i) {
+        if(strcmp(args[0], builtin_str[i]) == 0) {
+            return (*builtin_funcs[i])(args);
+        }
+    }
+
+    return sh_launch(args);
+}

@@ -4,6 +4,7 @@
 #define SH_TOK_DELIMS "\t\r\n\a"
 
 void shloop(void);
+uint8_t sh_execute(char **args);
 
 // parsing shell input
 char *sh_read_line();
