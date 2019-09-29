@@ -1,6 +1,6 @@
 #include "shell.h"
 
-uint8_t main(int argc, char **argv)
+int32_t main(int argc, char **argv)
 {
     //Load config
 

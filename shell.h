@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #define SH_TOK_BUFSIZE 64
-#define SH_TOK_DELIMS "\t\r\n\a"
+#define SH_TOK_DELIMS " \t\r\n\a"
 
 void shloop(void);
 uint8_t sh_execute(char **args);
@@ -19,17 +19,8 @@ uint8_t sh_help(char **args);
 uint8_t sh_exit(char **args);
 
 // Array of shell builtin names and functions pointers
-char *builtin_str[] = {
-    "cd",
-    "help",
-    "exit"
-};
-
-uint8_t (*builtin_funcs[])(char **) = {
-    &sh_cd,
-    &sh_help,
-    &sh_exit,
-};
+extern char *builtin_str[];
+extern uint8_t (*builtin_funcs[])(char **);
 
 // to get number of builtins
 size_t sh_num_builtins();

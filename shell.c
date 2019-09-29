@@ -1,9 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include "shell.h"
+
+// Initialising builtin names and functions
+char *builtin_str[] = {
+    "cd",
+    "help",
+    "exit"
+};
+
+uint8_t (*builtin_funcs[])(char **) = {
+    &sh_cd,
+    &sh_help,
+    &sh_exit,
+};
+
 
 void shloop(void)
 {
@@ -15,7 +30,7 @@ void shloop(void)
         printf("> ");
         line = sh_read_line();
         args = sh_split_line(line);
-        status = sh_exec(args);
+        status = sh_execute(args);
 
         free(line);
         free(args);
@@ -25,7 +40,7 @@ void shloop(void)
 char *sh_read_line()
 {
     char *line = NULL;
-    ssize_t bufsize = 0;
+    size_t bufsize = 0;
     getline(&line, &bufsize, stdin);
     return line;
 }
@@ -43,35 +58,37 @@ char **sh_split_line(char *line)
 
     token = strtok(line, SH_TOK_DELIMS);
     while(token != NULL) {
-        token[position] = token;
+        tokens[position] = token;
         position++;
 
         if(position >= bufsize) {
-            bufsize += SH_TOK_DELIMS;
-            tokens = realloc(tokens, sizeof(char) * bufsize);
+            bufsize += SH_TOK_BUFSIZE;
+            tokens = realloc(tokens, sizeof(char *) * bufsize);
 
             if(!tokens) {
                 fprintf(stderr, "she sell: allocation error!");
                 exit(EXIT_FAILURE);
             }
         }
+
+        token = strtok(NULL, SH_TOK_DELIMS);
     }
 
-
-    token = strtok(NULL, SH_TOK_DELIMS);
+    tokens[position] = NULL;
     return tokens;
 }
 
 uint8_t sh_launch(char **args)
 {
     pid_t pid, wpid;
-    uint8_t status;
+    int32_t status;
 
     pid = fork();
     if(pid == 0) {
         if(execvp(args[0], args) == -1) {
             perror("she sell");
         }
+        exit(EXIT_FAILURE);
     } else if(pid < 0) {
         perror("she sell");
     } else {

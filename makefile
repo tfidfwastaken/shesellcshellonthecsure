@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-I. -Wall -Wextra
 DEPS = shell.h
 OBJ = shell.o shell_client.o 
 
